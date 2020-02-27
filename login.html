@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="plugin/knockoutjs/knockout-3.4.2.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var login = {
+        status: ko.observable(""),
+      }
+    </script>
+    
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Meta -->
+    <meta name="description" content="VPP Group | Developer Management System">
+    <meta name="author" content="Agung Kurniawan">
+
+    <title>VPP Group</title>
+
+    <!-- vendor css -->
+    <link href="assets/lib/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="assets/lib/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="assets/lib/typicons.font/typicons.css" rel="stylesheet">
+
+    <!-- azia CSS -->
+    <link rel="stylesheet" href="assets/css/azia.css">
+
+  </head>
+  <body class="vpp-body">
+
+    <div class="az-signup-wrapper">
+      <div class="az-column-signup-left">
+        <!-- <div>
+          <i class="typcn typcn-chart-bar-outline"></i>
+          <h1 class="az-logo">az<span>i</span>a</h1>
+          <h5>Responsive Modern Dashboard &amp; Admin Template</h5>
+          <p>We are excited to launch our new company and product Azia. After being featured in too many magazines to mention and having created an online stir, we know that ThemePixels is going to be big. We also hope to win Startup Fictional Business of the Year this year.</p>
+          <p>Browse our site and see for yourself why you need Azia.</p>
+          <a href="index.html" class="btn btn-outline-indigo">Learn More</a>
+        </div> -->
+      </div><!-- az-column-signup-left -->
+      <div class="az-column-signup">
+        <!-- <h1 class="az-logo">az<span>i</span>a</h1> -->
+        <div class="az-signup-header">
+          <!-- <h2>Get Started</h2> -->
+          <div class="vpp-logo-login">
+            <img src="./assets/img/logo-vpp.svg" width=250px>
+          </div>
+          <div style="padding-top: 40px; text-align: center;">
+            <span style="font-size: 18px; text-align: center; color: #70737c;">Login with u'r access.</span>
+          </div>
+          <div id="error"></div>
+          <form method="post" id="login-form">
+            <div class="form-group">
+              <label>Username</label>
+              <input id="username" name="username" type="text" class="form-control" placeholder="Enter your username">
+            </div><!-- form-group -->
+            <div class="form-group">
+              <label>Password</label>
+              <input id="password" name="password" type="password" class="form-control" placeholder="Enter your password">
+            </div><!-- form-group -->
+            <button id="btn-login" type="submit" name="btn-login" class="btn btn-az-primary btn-block">Login</button>
+            <!-- <div class="row row-xs"> -->
+              <!-- <div class="col-sm-6"><button class="btn btn-block"><i class="fab fa-facebook-f"></i> Signup with Facebook</button></div>
+              <div class="col-sm-6 mg-t-10 mg-sm-t-0"><button class="btn btn-primary btn-block"><i class="fab fa-twitter"></i> Signup with Twitter</button></div> -->
+            <!-- </div> -->
+          </form>
+          <!-- <div class="vpp-signup-footer" style="padding-top: 10px">
+            <p>Forget password? <a href="#">Forget</a></p>
+          </div> -->
+          <div class="vpp-signup-footer" style="padding-top: 40px; display: -webkit-box">
+            <img src="dms-dark.svg" width=60px>
+            <div style="padding: 12px;">
+              <p>Developer Management System &copy; 2019 </p>
+              <p><a href="#">Syarat & Ketentuan</a> <a href="#">Kebijakan Privacy</a></p>
+            </div>
+          </div>
+        </div><!-- az-signup-header -->
+        
+      </div><!-- az-column-signup -->
+    </div><!-- az-signup-wrapper -->
+
+    <script src="assets/lib/jquery/jquery.min.js"></script>
+    <script src="plugin/bootstrap-validate/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="plugin/popper.min.js"></script>
+
+    <script src="plugin/cookie/jquery.cookie.js"></script>
+
+    <script src="assets/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="assets/lib/ionicons/ionicons.js"></script> -->
+
+    <script src="assets/js/azia.js"></script>
+
+    <script src="plugin/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+    <script src="plugin/underscore/underscore.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+      
+
+      $(document).ready(function(){
+
+        function submitForm(){  
+          var data = $("#login-form").serialize();
+          $.ajax({
+            type : 'POST',
+            url  : 'controller/login.php',
+            data : data,
+            beforeSend: function(res){ 
+              console.log(res)
+              $("#error").fadeOut();
+              $("#btn-login").html('<span class="glyphicon glyphicon-transfer"></span> &nbsp;Loading ...');
+            },
+            success :  function(response){ 
+              // console.log("hasil dari response", response)     
+              if(response == "ok"){
+                // console.log('masuk', response)
+                $("#btn-login").html('<img style="width:20px;" src="loader.svg" /> &nbsp;Loading ...');
+                setTimeout(function(){
+                  window.location.href = "index.php?page=dashboard";
+                },1000);
+              }else{
+                $("#error").fadeIn(1000, function(){      
+                  $("#error").html('<div class="alert alert-danger"> <span class="glyphicon glyphicon-info-sign"></span> &nbsp; '+response+' !</div>');
+                  $("#btn-login").html('<span class="glyphicon glyphicon-log-in"></span> &nbsp; Masuk');
+                });
+              }
+            }
+          });
+          return false;
+        }
+        /* validation */
+        $("#login-form").validate({
+          rules:
+            {
+              password: {
+                required: true,
+              },
+              username: {
+                required: true,
+                // email: true
+              },
+            },
+          messages:
+            {
+              password: {
+                required: "Kata Sandi Wajib Diisi..."
+              },
+              username: {
+                required: "Nama Pengguna Wajib Diisi..."
+              },
+            },
+          submitHandler: submitForm
+        });
+        /* validation */
+        ko.applyBindings(login);
+      });
+    </script>
+  </body>
+</html>
