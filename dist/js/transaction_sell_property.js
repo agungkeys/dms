@@ -16,6 +16,7 @@ var trsp = {
 	modeMultiple: ko.observable(false),
 	data: ko.observableArray([]),
 	completed: ko.observable({BF: false, DP: false, KPR: false}),
+	sellingPrice: ko.observable('0'),
 };
 
 trsp.prepare = function(){
@@ -107,7 +108,7 @@ trsp.selectMainTransaction = function(){
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
-            	console.log(data)
+            	// console.log(data)
                 return {
                     results: data
                 };
@@ -178,6 +179,8 @@ trsp.selectMainTransaction = function(){
             cache: false
         }
     });
+    $("#cluster").select2();
+
     $('#project').on('select2:select', function (e) {
     	var dataIds = e.params.data.id;
         trsp.selectProjectId = dataIds;
@@ -216,7 +219,7 @@ trsp.selectMainTransaction = function(){
 			url: './controller/transaction_sell_property/transaction_sell_property_controller_find_cluster.php',
 			data: {id:dataIdCluster}
 		}).done(function(data){
-			console.log("Get detail cluster", data)
+			// console.log("Get detail cluster", data)
 			$("#block").val(data[0].KAVBLOK);
 			$("#kavno").val(data[0].KAVNO);
 			$("#typelb").val(data[0].TYPELB);
@@ -251,7 +254,7 @@ trsp.selectMainTransaction = function(){
 			url: './controller/transaction_sell_property/transaction_sell_property_controller_find_customer.php',
 			data: {id:dataIdCust}
 		}).done(function(data){
-			console.log("Get detail transaction", data)
+			// console.log("Get detail transaction", data)
 
 			$("#ktp").val(data[0].KTP);
 			$("#npwp").val(data[0].NPWP);
@@ -274,6 +277,7 @@ trsp.resetForm = function(){
 	$('#forminputdetails').parsley().reset();
 	$("#project").select2("val", "0");
 	$("#cluster").select2("val", "0");
+	$("#sellingprice").val("");
 	$("#maincategory").select2("val", "0");
 	$("#customer").select2("val", "0");
 	$("#category").empty();
@@ -349,6 +353,7 @@ trsp.doAddDetailItem = function(){
 				typelb: $("#typelb").val(),
 				typelt: $("#typelt").val(),
 				excessland: $("#land_excess").val(),
+				price: toAngka($("#sellingprice").val()),
 				customerid: $("#customer").select2('data')[0].id,
 				fullname: $("#customer").select2('data')[0].text,
 				ktp: $("#ktp").val(),
@@ -474,7 +479,7 @@ trsp.detailTransaction = function(dt){
 }
 
 trsp.editTransaction = function(dt) {
-	console.log("Edit Transaction=====>", dt);
+	// console.log("Edit Transaction=====>", dt);
 	trsp.buttonVisible(false);
 	trsp.buttonUnVisible(true);
 	trsp.table(false);
@@ -486,37 +491,103 @@ trsp.editTransaction = function(dt) {
 	$.ajax({
 		dataType: 'json',
 		type: 'post',
-		url: './controller/master_category/master_category_controller_find.php',
+		url: './controller/transaction_sell_property/transaction_sell_property_controller_find.php',
 		data: {id:dt}
 	}).done(function(data){
-		// console.log("Get data edited", data)
+		console.log("Get data edited", data[0])
 		trsp.getDataEdit({
-			maincategoryid: data.MAINCATEGORYID,
-			categoryname: data.CATEGORYNAME,
-			categoryinfo: data.DESCRIPTION
+			customerid: data[0].CUSTOMERID,
+			fullname: data[0].FULLNAME,
+			ktp: data[0].KTP,
+			npwp: data[0].NPWP,
+			address: data[0].ADDRESS,
+			zipcode: data[0].ZIPCODE,
+			nameprovince: data[0].NAMEPROVINCE,
+			namekabupaten: data[0].NAMEKABUPATEN,
+			namekecamatan: data[0].NAMEKECAMATAN,
+			namekelurahan: data[0].NAMEKELURAHAN,
+			telphp: data[0].TELPHP,
+			email: data[0].EMAIL,
+			clusterid: data[0].CLUSTERID,
+			cheque: data[0].CHEQUE,
+			projectid: data[0].PROJECTID,
+			projectname: data[0].PROJECTNAME,
+			kavblok: data[0].KAVBLOK,
+			kavno: data[0].KAVNO,
+			typelb: data[0].TYPELB,
+			typelt: data[0].TYPELT,
+			excessland: data[0].EXCESSLAND,
+			price: data[0].PRICE,
+			bftotal: data[0].BFTOTAL,
+			bfaccountid: data[0].BFACCOUNTID,
+			bfaccountname: data[0].BFACCOUNTNAME,
+			bfdate: data[0].BFDATE,
+			dptotal: data[0].DPTOTAL,
+			dpaccountid: data[0].DPACCOUNTID,
+			dpaccountname: data[0].DPACCOUNTNAME,
+			dpdate: data[0].DPDATE,
+			paytotal: data[0].PAYTOTAL,
+			payaccountid: data[0].PAYACCOUNTID,
+			payaccountname: data[0].PAYACCOUNTNAME,
+			paydate: data[0].PAYDATE,
+			type: data[0].TYPE,
+			datecreate: data[0].DATECREATE,
+			created: data[0].CREATED,
+			description: data[0].DESCRIPTION
 		});
-		$("#categoryname").val(data.CATEGORYNAME);
-		$("#categoryinformation").val(data.DESCRIPTION);
 
-		var mainCategorySelected = $('#maincategory');
 		$.ajax({
 		    dataType: "json",
 	        type: "post",
-	        url: "./controller/master_category/master_category_select_main_category.php",
+	        url: "./controller/transaction_finance/transaction_select_project.php",
 	        data:{
-	            1: data.MAINCATEGORYID
+	            1: data[0].PROJECTID
 	        }
 		}).then(function (data) {
-			dataInit = {
-				id: data.MAINCATEGORYID,
-				text: data.MAINCATEGORYNAME,
-				color: data.COLOR,
-				groups: data.GROUPS
-			}
-		    $("#maincategory").select2("trigger", "select", {
-			    data: dataInit
+			// console.log('data edit===>', data);
+		    $("#project").select2("trigger", "select", {
+			    data: data[0]
 			});
+			// $("#project").prop("disabled", true);
 		});
+
+		$.ajax({
+		    dataType: "json",
+	        type: "post",
+	        url: "./controller/transaction_finance/transaction_select_account.php",
+	        data:{
+	            1: data[0].ACCOUNTID
+	        }
+		}).then(function (data) {
+			// console.log('data edit===>', data);
+		    $("#account").select2("trigger", "select", {
+			    data: data[0]
+			});
+			// $("#account").prop("disabled", true);
+		});
+
+		$("#cheque").val(data[0].CHEQUE);
+
+
+		// var mainCategorySelected = $('#maincategory');
+		// $.ajax({
+		//     dataType: "json",
+	 //        type: "post",
+	 //        url: "./controller/master_category/master_category_select_main_category.php",
+	 //        data:{
+	 //            1: data.MAINCATEGORYID
+	 //        }
+		// }).then(function (data) {
+		// 	dataInit = {
+		// 		id: data.MAINCATEGORYID,
+		// 		text: data.MAINCATEGORYNAME,
+		// 		color: data.COLOR,
+		// 		groups: data.GROUPS
+		// 	}
+		//     $("#maincategory").select2("trigger", "select", {
+		// 	    data: dataInit
+		// 	});
+		// });
 	});
 }
 
@@ -558,13 +629,14 @@ trsp.deleteTransaction = function(id) {
 trsp.saveTransaction = function(dt){
 	// console.log("Save Transaction=====>")
 	const cat = trsp.completed();
-	if(cat.BF === true && cat.DP === true && cat.KPR === true){
+	console.log('cat===>>>',cat)
+	if(cat.BF === true && cat.DP === true){
 		var validate = $('#forminput').parsley().validate();
 
 		if(validate){
 			if(trsp.data().length !== 0){
 				// Save Multiple Data
-				
+				console.log('Save Multiple Data');
 				trsp.loader(true);
 				$.ajax({
 					dataType: "json",
@@ -612,7 +684,7 @@ trsp.saveTransaction = function(dt){
 						dataType: "json",
 						type: "post",
 						url: "./controller/transaction_sell_property/transaction_sell_property_controller_add_sell.php",
-						data: {...trsp.data()[2], ...dataTransactionSell },
+						data: {...trsp.data()[0], ...dataTransactionSell },
 					}).done(function(data){
 
 						trsp.resetForm();
@@ -773,33 +845,43 @@ trsp.ajaxGetDataTransaction = function() {
             	}
 	        }
 		},{
-		    "targets": 7,
-	    	"render": function ( datas, type, row ) {
-	            if(datas.length >= 16){
-            		return '<span data-toggle="tooltip-primary" data-placement="bottom" title data-original-title="'+datas+'" style="cursor: pointer;">'+datas.substr( 0, 16 )+'...</span>'
-            	}else{
-            		return datas
-            	}
-	        }
+			"targets": 2,
+		    "data": function (datas) {
+		    	return datas[2]+' / '+datas[3];
+		    }
 		},{
-		    "targets": 8,
-	    	"render": function ( datas, type, row ) {
-	            if(datas.length >= 15){
-            		return '<span data-toggle="tooltip-primary" data-placement="bottom" title data-original-title="'+datas+'" style="cursor: pointer;">'+datas.substr( 0, 15 )+'...</span>'
-            	}else{
-            		return datas
-            	}
-	        }
+			"targets": 3,
+		    "visible": false
 		},{
-			"targets": 9,
+			"targets": 4,
+		    "data": function (datas) {
+		    	return datas[4]+' / '+datas[5]+' / '+datas[6];
+		    }
+		},{
+			"targets": 5,
+			"data": function (datas) {
+		    	return datas[7];
+		    }
+		},{
+			"targets": 6,
+			"data": function (datas) {
+		    	return datas[8];
+		    }
+		},{
+			"targets": 7,
 		    "data": function (datas) {
 		    	return formatNumber(datas[9]);
 		    }
 		},{
-			"orderable": false,
-		    "targets": 11,
+			"targets": 8,
 		    "data": function (datas) {
-		    	return '<div class="btn-group"><a href="#" style="color:grey" onclick=trsp.detailTransaction('+JSON.stringify(datas[0])+');><i class="fa fa-table"></i></a>&nbsp;&nbsp;<a href="#" style="color:red" onclick=trsp.deleteTransaction('+JSON.stringify(datas[0])+');><i class="fa fa-trash"></i></a></div>'
+		    	return datas[10];
+		    }
+		},{
+			"targets": 9,
+			"orderable": false,
+		    "data": function (datas) {
+		    	return '<div class="btn-group"><a href="#" style="color:grey" onclick=trsp.editTransaction('+JSON.stringify(datas[0])+');><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;<a href="#" style="color:red" onclick=trsp.deleteTransaction('+JSON.stringify(datas[0])+');><i class="fa fa-trash"></i></a></div>'
 		    }
 		}],
 		"order": [[ 0, 'desc' ]],
@@ -815,23 +897,24 @@ trsp.ajaxGetDataTransaction = function() {
     $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
 }
 
-trsp.toAmountNumber = function() {
-    var valueOriginal = $("#amount").val();
-    var valueValidate = validate(valueOriginal);
-    if(valueValidate != null){
-        var value = formatNumber(valueValidate[0]);
-        $("#amount").val(value);
-    }else{
-        swal({
-            title: "Tidak Diizinkan",
-            text: "Amount harus angka, tanpa titik & koma...! ",
-            type: "error",
-            confirmButtonText: "Ya"
-        },function (isConfirm) {
-            $("#amount").val("");
-            $("#amount").focus();
-        });
-    }
+trsp.toAmountNumber = function(e) {
+	return console.log(e)
+    // var valueOriginal = $("#amount").val();
+    // var valueValidate = validate(valueOriginal);
+    // if(valueValidate != null){
+    //     var value = formatNumber(valueValidate[0]);
+    //     $("#amount").val(value);
+    // }else{
+    //     swal({
+    //         title: "Tidak Diizinkan",
+    //         text: "Amount harus angka, tanpa titik & koma...! ",
+    //         type: "error",
+    //         confirmButtonText: "Ya"
+    //     },function (isConfirm) {
+    //         $("#amount").val("");
+    //         $("#amount").focus();
+    //     });
+    // }
 }
 
 function formatNumber(n) {
@@ -843,7 +926,10 @@ function validate(s) {
     return s.match(rgx);
 }
 
-function toAngka(rp){return parseInt(rp.replace(/,.*|\D/g,''),10)}
+function toAngka(rp){
+	var temp = numeral(rp)
+	return temp._value
+}
 
 $(document).ready(function(){
 	trsp.prepare();
@@ -851,4 +937,43 @@ $(document).ready(function(){
 	// ko.applyBindings();
 	var trspdt = new viewModels();
 	ko.applyBindings(trspdt);
+
+	$.fn.inputFilter = function(inputFilter) {
+		return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
+			if (inputFilter(this.value)) {
+				this.oldValue = this.value;
+				this.oldSelectionStart = this.selectionStart;
+				this.oldSelectionEnd = this.selectionEnd;
+			} else if (this.hasOwnProperty("oldValue")) {
+				this.value = this.oldValue;
+				this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+			} else {
+				this.value = "";
+			}
+		});
+	};
+
+	$("input[type='text'].numeric").inputFilter(function(value) {
+		return /^-?\d*$/.test(value); 
+	});
+
+	$("input[type='text'].numeric").blur(function() {
+		var data = $(this);
+
+		if(data !== undefined || data !== null){
+	        var value = formatNumber(data[0].value);
+	        // console.log(value)
+	        return $(this).val(value)
+	    }else{
+	        swal({
+	            title: "Tidak Diizinkan",
+	            text: "Amount harus angka, tanpa titik & koma...! ",
+	            type: "error",
+	            confirmButtonText: "Ya"
+	        },function (isConfirm) {
+	            $("#amount").val("");
+	            $("#amount").focus();
+	        });
+	    }
+	});
 });

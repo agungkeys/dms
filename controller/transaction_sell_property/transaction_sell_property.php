@@ -24,7 +24,7 @@ $columns = array(
     array( 'db' => 'EXCESSLAND', 'dt' => 6),
     array( 'db' => 'FULLNAME', 'dt' => 7),
     array( 'db' => 'ADDRESS', 'dt' => 8),
-    array( 'db' => 'PAYTOTAL', 'dt' => 9),
+    array( 'db' => 'PRICE', 'dt' => 9),
     array(
         'db'        => 'DATECREATE',
         'dt'        => 10,

@@ -156,6 +156,7 @@
     
     <script src="assets/lib/pdf-object/pdfobject.min.js"></script>
     <script src="assets/js/azia.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
     
   

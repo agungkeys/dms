@@ -166,6 +166,7 @@
     $arrLang['en']['value'] = 'Value';
     $arrLang['en']['and'] = 'and';
     $arrLang['en']['kavblok'] = 'Kav. Blok';
+    $arrLang['en']['kavblokno'] = 'Kav. Blok / No';
     $arrLang['en']['kavno'] = 'Kav. No.';
     $arrLang['en']['typelb'] = 'Type LB';
     $arrLang['en']['typelt'] = 'Type LT';
@@ -341,6 +342,7 @@
     $arrLang['id']['value'] = 'Nilai';
     $arrLang['id']['and'] = 'dan';
     $arrLang['id']['kavblok'] = 'Kav. Blok';
+    $arrLang['id']['kavblokno'] = 'Kav. Blok / No';
     $arrLang['id']['kavno'] = 'Kav. No.';
     $arrLang['id']['typelb'] = 'Type LB';
     $arrLang['id']['typelt'] = 'Type LT';

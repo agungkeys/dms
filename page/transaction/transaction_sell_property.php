@@ -55,7 +55,7 @@
 								<div class="form-group">
 									<div id="slWrapperProject" class="parsley-select">
 										<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['project']; ?></label>
-										<select id="project" class="form-control select2-no-search" data-parsley-class-handler="#slWrapperProject" data-parsley-errors-container="#slErrorContainerProject"  data-parsley-required-message="Project required!" required>
+										<select data-bind='enable: trsp.titleNew()' id="project" class="form-control select2-no-search" data-parsley-class-handler="#slWrapperProject" data-parsley-errors-container="#slErrorContainerProject"  data-parsley-required-message="Project required!" required>
 						              	</select>
 						              	<div id="slErrorContainerProject"></div>
 									</div>
@@ -66,7 +66,7 @@
 								<div class="form-group">
 									<div id="slWrapper4" class="parsley-select">
 										<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['account']; ?></label>
-										<select id="account" class="form-control select2-no-search" data-parsley-class-handler="#slWrapper4" data-parsley-errors-container="#slErrorContainer4"  data-parsley-required-message="Account required!" required>
+										<select data-bind='enable: trsp.titleNew()' id="account" class="form-control select2-no-search" data-parsley-class-handler="#slWrapper4" data-parsley-errors-container="#slErrorContainer4"  data-parsley-required-message="Account required!" required>
 						              	</select>
 						              	<div id="slErrorContainer4"></div>
 									</div>
@@ -75,7 +75,7 @@
 							<div class="col-lg-4 col-xs-12">
 								<div class="form-group">
 									<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['cek_number']; ?></label>
-									<input id="cheque" type="text" class="form-control" placeholder="Enter your cheque number" onkeyup='formatUppersize(this)'>
+									<input data-bind='enable: trsp.titleNew()' id="cheque" type="text" class="form-control" placeholder="Enter your cheque number" onkeyup='formatUppersize(this)'>
 								</div>
 							</div>
 
@@ -121,8 +121,9 @@
 							</div>
 							<div class="col-lg-3 col-xs-12">
 								<div class="form-group">
-									<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['description']; ?></label>
-									<input readonly id="cluster_description" type="text" class="form-control">
+									<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['selling_price']; ?></label>
+									<!-- <input id="cluster_description" type="text" class="form-control"> -->
+									<input id="sellingprice" type="text" class="form-control numeric" placeholder="Enter your selling price" data-parsley-required-message="Amount required!" required data-bind="textInput: trsp.sellingPrice">
 								</div>
 							</div>
 
@@ -257,7 +258,7 @@
 							<div class="col-lg-4 col-xs-12">
 								<div class="form-group">
 									<label class="form-label mg-b-0"><?php echo $arrLang[$defaultLanguage]['amount']; ?></label>
-									<input onfocusout="trsp.toAmountNumber();" id="amount" type="text" class="form-control" placeholder="Enter your amount" data-parsley-required-message="Amount required!" required>
+									<input onfocusout="trsp.toAmountNumber();" id="amount" type="text" class="form-control numeric" placeholder="Enter your amount" data-parsley-required-message="Amount required!" required>
 								</div>
 							</div>
 							<div class="col-lg-4 col-xs-12">
@@ -271,6 +272,7 @@
 							<div class="col-12">
 								<button class="btn btn-az-secondary btn-block" onclick="trsp.addDetailItem()"><?php echo $arrLang[$defaultLanguage]['add_detail_item']; ?></button>
 							</div>
+							<!-- Start Result Summary -->
 							<div class="col-12">
 								<div class="table-responsive mg-t-10">
 						            <table class="table table-bordered">
@@ -286,6 +288,11 @@
 						                  <th style="text-align: center"></th>
 						                </tr>
 						              </thead>
+						              	<tr style="background: #eef7ff;">
+						              		<th colspan=6><?php echo $arrLang[$defaultLanguage]['selling_price']; ?></th>
+						              		<th style="text-align: right">Rp <span data-bind="text: formatNumber(trsp.sellingPrice())"></span></th>
+						              		<th></th>
+					              		</tr>
 						              <tbody data-bind="foreach: trsp.data">
 						                <tr>
 						                  <th scope="row" data-bind="text: ($index()+1), attr:{name:($index()+1)}"></th>
@@ -307,14 +314,18 @@
 						              		<th style="text-align: right">Rp <span data-bind="text: getTotal"></span></th>
 						              		<th></th>
 						              	</tr>
+						              	<tr>
+						              		<th colspan=6>Total Credit</th>
+						              		<th style="text-align: right">Rp <span data-bind="text: formatNumber(JSON.stringify(toAngka(trsp.sellingPrice()) - toAngka(getTotal())))"></span></th>
+						              		<th></th>
+						              	</tr>
 						              </tfoot>
 						            </table>
 					            </div><!-- bd -->
 							</div>
+							<!-- End Result Summary -->
 						</div>
 					</div>
-
-					
 				</div>
 			</div>
 		</div>
@@ -324,18 +335,12 @@
 		          <tr>
 		            <th class="wd-5p"><?php echo $arrLang[$defaultLanguage]['id']; ?></th>
 		            <th class="wd-15p"><?php echo $arrLang[$defaultLanguage]['project_name']; ?></th>
-		            <th class="wd-4p"><?php echo $arrLang[$defaultLanguage]['kavblok']; ?></th>
+		            <th class="wd-4p"><?php echo $arrLang[$defaultLanguage]['kavblokno']; ?></th>
 		            <th class="wd-4p"><?php echo $arrLang[$defaultLanguage]['kavno']; ?></th>
-		            <th class="wd-4p"><?php echo $arrLang[$defaultLanguage]['typelb']; ?></th>
-		            <th class="wd-4p"><?php echo $arrLang[$defaultLanguage]['typelt']; ?></th>
-		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['land_excess']; ?></th>
-
+		            <th class="wd-4p">LB / LT / <?php echo $arrLang[$defaultLanguage]['land_excess']; ?></th>
 		            <th class="wd-15p"><?php echo $arrLang[$defaultLanguage]['customer']; ?></th>
 		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['address']; ?></th>
-		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['kpr']; ?></th>
-
-
-    		        
+		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['selling_price']; ?></th>
 		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['date_create']; ?>&nbsp;<sup style="font-weight: normal">mm-dd-yyyy</sup></th>
 		            <th class="wd-10p"><?php echo $arrLang[$defaultLanguage]['action']; ?></th>
 		          </tr>
